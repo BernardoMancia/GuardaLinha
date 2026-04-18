@@ -10,7 +10,8 @@ dist/
 web-build/
 expo-env.d.ts
 
-# Native builds
+# Native builds (generated via prebuild on EAS)
+android/
 ios/
 
 # Environment
