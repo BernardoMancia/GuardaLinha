@@ -31,6 +31,12 @@
     ],
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2187199b-d697-420e-b959-1a64f20959a4"
+      }
+    },
+    "owner": "luke_arwolf"
   }
 }
