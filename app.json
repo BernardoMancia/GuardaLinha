@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "BlockCall",
+    "name": "GuardaLinha",
     "slug": "app-block-ligacao",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,7 +17,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#090b12"
       },
-      "package": "com.blockcall.app",
+      "package": "com.guardalinha.app",
       "minSdkVersion": 29,
       "edgeToEdgeEnabled": true,
       "permissions": [

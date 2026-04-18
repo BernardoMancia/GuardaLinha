@@ -1,4 +1,4 @@
-# BlockCall — Smart Call Blocker
+# GuardaLinha — Smart Call Blocker
 
 > Android app to intelligently block incoming calls using 9 configurable rule types, built with React Native + Expo and a native Kotlin `CallScreeningService`.
 
@@ -52,7 +52,7 @@ eas build --profile preview --platform android
 ```
 
 ### Permissions Setup
-After installing the APK, the app will guide you to set BlockCall as the **default call screening app** in Android settings. This is required for call blocking to function.
+After installing the APK, the app will guide you to set GuardaLinha as the **default call screening app** in Android settings. This is required for call blocking to function.
 
 ---
 
@@ -104,7 +104,7 @@ eas build --profile preview --platform android
 ```
 
 ### Configuração de Permissões
-Após instalar o APK, o app guiará você para definir o **BlockCall como app de triagem de chamadas padrão** nas configurações do Android. Essa permissão é obrigatória para o bloqueio funcionar.
+Após instalar o APK, o app guiará você para definir o **GuardaLinha como app de triagem de chamadas padrão** nas configurações do Android. Essa permissão é obrigatória para o bloqueio funcionar.
 
 ### Arquitetura
 ```

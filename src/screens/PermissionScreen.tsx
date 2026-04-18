@@ -39,8 +39,8 @@ export const PermissionScreen = ({ navigation }: any) => {
     },
     {
       icon: '✅',
-      title: 'Selecionar BlockCall',
-      desc: 'Escolha "BlockCall" como app de triagem de chamadas padrão',
+      title: 'Selecionar GuardaLinha',
+      desc: 'Escolha "GuardaLinha" como app de triagem de chamadas padrão',
     },
     {
       icon: '🛡️',
@@ -55,7 +55,7 @@ export const PermissionScreen = ({ navigation }: any) => {
         <Text style={styles.heroEmoji}>🔐</Text>
         <Text style={styles.title}>Permissão Necessária</Text>
         <Text style={styles.subtitle}>
-          Para bloquear chamadas, o BlockCall precisa ser configurado como app de
+          Para bloquear chamadas, o GuardaLinha precisa ser configurado como app de
           triagem de chamadas do sistema
         </Text>
       </View>

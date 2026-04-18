@@ -61,7 +61,7 @@ export const HomeScreen = ({ navigation }: any) => {
     >
       <View style={styles.header}>
         <View>
-          <Text style={styles.title}>BlockCall</Text>
+          <Text style={styles.title}>GuardaLinha</Text>
           <Text style={styles.subtitle}>Proteção inteligente de chamadas</Text>
         </View>
         <StatusBadge active={masterEnabled && hasRole} label={hasRole ? (masterEnabled ? 'Ativo' : 'Pausado') : 'Sem Permissão'} />
