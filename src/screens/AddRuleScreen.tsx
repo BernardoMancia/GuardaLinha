@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,10 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
-  KeyboardAvoidingView,
+  Keyboard,
   Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, ruleTypeColors } from '../theme/colors';
 import { GlassCard } from '../components/GlassCard';
 import { RulesStorage } from '../storage/RulesStorage';
@@ -46,6 +47,8 @@ const RULE_DESCRIPTIONS: Record<RuleType, string> = {
 };
 
 export const AddRuleScreen = ({ navigation }: any) => {
+  const insets = useSafeAreaInsets();
+  const scrollRef = useRef<ScrollView>(null);
   const [selectedType, setSelectedType] = useState<RuleType | null>(null);
   const [label, setLabel] = useState('');
   const [numbersText, setNumbersText] = useState('');
@@ -63,6 +66,18 @@ export const AddRuleScreen = ({ navigation }: any) => {
     );
   };
 
+  const scrollToInput = (y: number) => {
+    setTimeout(() => {
+      scrollRef.current?.scrollTo({ y: y - 120, animated: true });
+    }, 300);
+  };
+
+  const parseNumbers = (text: string) =>
+    text
+      .split(/[\n,;]+/)
+      .map((n) => n.trim().replace(/[\s\-\(\)\+]/g, '').replace(/\D/g, ''))
+      .filter((n) => n.length >= 8);
+
   const buildRule = (): Rule | null => {
     const id = Date.now().toString();
     const base = {
@@ -71,12 +86,6 @@ export const AddRuleScreen = ({ navigation }: any) => {
       enabled: true,
       createdAt: Date.now(),
     };
-
-    const parseNumbers = (text: string) =>
-      text
-        .split(/[\n,;]+/)
-        .map((n) => n.trim().replace(/\D/g, ''))
-        .filter((n) => n.length >= 8);
 
     switch (selectedType) {
       case 'BLOCK_ALL':
@@ -101,8 +110,8 @@ export const AddRuleScreen = ({ navigation }: any) => {
       }
 
       case 'NUMBER_RANGE': {
-        const f = rangeFrom.replace(/\D/g, '');
-        const t = rangeTo.replace(/\D/g, '');
+        const f = rangeFrom.replace(/[\s\-\(\)\+]/g, '').replace(/\D/g, '');
+        const t = rangeTo.replace(/[\s\-\(\)\+]/g, '').replace(/\D/g, '');
         if (!f || !t || f.length < 8 || t.length < 8) {
           Alert.alert('Atenção', 'Informe um range válido com ao menos 8 dígitos cada.');
           return null;
@@ -173,12 +182,14 @@ export const AddRuleScreen = ({ navigation }: any) => {
   const accent = selectedType ? ruleTypeColors[selectedType] || colors.neonGreen : colors.neonGreen;
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: colors.bg }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    <ScrollView
+      ref={scrollRef}
+      style={styles.container}
+      contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 40 }]}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="interactive"
+      automaticallyAdjustKeyboardInsets={true}
     >
-    <ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       <Text style={styles.subtitle}>Escolha o tipo de bloqueio</Text>
 
       <View style={styles.typeGrid}>
@@ -223,20 +234,34 @@ export const AddRuleScreen = ({ navigation }: any) => {
               placeholderTextColor={colors.textMuted}
               value={label}
               onChangeText={setLabel}
+              onFocus={(e) => {
+                const target = e.target as any;
+                target?.measure?.((x: number, y: number, w: number, h: number, px: number, py: number) => {
+                  scrollToInput(py);
+                });
+              }}
             />
 
             {(selectedType === 'SPECIFIC_NUMBERS' || selectedType === 'NUMBER_LIST') && (
               <>
                 <Text style={styles.fieldLabel}>Números (um por linha ou separados por vírgula)</Text>
+                <Text style={styles.hint}>Aceita: +55 27 99633-3206 ou 5527996333206</Text>
                 <TextInput
                   style={[styles.input, styles.textarea]}
-                  placeholder="11999990000&#10;21988880000&#10;..."
+                  placeholder={"+55 27 99633-3206\n5521988880000\n..."}
                   placeholderTextColor={colors.textMuted}
                   value={numbersText}
                   onChangeText={setNumbersText}
                   multiline
                   numberOfLines={5}
                   textAlignVertical="top"
+                  keyboardType="phone-pad"
+                  onFocus={(e) => {
+                    const target = e.target as any;
+                    target?.measure?.((x: number, y: number, w: number, h: number, px: number, py: number) => {
+                      scrollToInput(py);
+                    });
+                  }}
                 />
               </>
             )}
@@ -244,15 +269,23 @@ export const AddRuleScreen = ({ navigation }: any) => {
             {selectedType === 'BLOCK_ALL_EXCEPT' && (
               <>
                 <Text style={styles.fieldLabel}>Números permitidos (whitelist)</Text>
+                <Text style={styles.hint}>Aceita: +55 27 99633-3206 ou 5527996333206</Text>
                 <TextInput
                   style={[styles.input, styles.textarea]}
-                  placeholder="11999990000&#10;21988880000&#10;..."
+                  placeholder={"+55 27 99633-3206\n5521988880000\n..."}
                   placeholderTextColor={colors.textMuted}
                   value={whitelistText}
                   onChangeText={setWhitelistText}
                   multiline
                   numberOfLines={5}
                   textAlignVertical="top"
+                  keyboardType="phone-pad"
+                  onFocus={(e) => {
+                    const target = e.target as any;
+                    target?.measure?.((x: number, y: number, w: number, h: number, px: number, py: number) => {
+                      scrollToInput(py);
+                    });
+                  }}
                 />
               </>
             )}
@@ -260,22 +293,35 @@ export const AddRuleScreen = ({ navigation }: any) => {
             {selectedType === 'NUMBER_RANGE' && (
               <>
                 <Text style={styles.fieldLabel}>Número inicial</Text>
+                <Text style={styles.hint}>Aceita: +55 27 99633-3206 ou 5527996333206</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: 11999990000"
+                  placeholder="Ex: +55 11 99999-0000"
                   placeholderTextColor={colors.textMuted}
                   value={rangeFrom}
                   onChangeText={setRangeFrom}
-                  keyboardType="numeric"
+                  keyboardType="phone-pad"
+                  onFocus={(e) => {
+                    const target = e.target as any;
+                    target?.measure?.((x: number, y: number, w: number, h: number, px: number, py: number) => {
+                      scrollToInput(py);
+                    });
+                  }}
                 />
                 <Text style={styles.fieldLabel}>Número final</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: 11999999999"
+                  placeholder="Ex: +55 11 99999-9999"
                   placeholderTextColor={colors.textMuted}
                   value={rangeTo}
                   onChangeText={setRangeTo}
-                  keyboardType="numeric"
+                  keyboardType="phone-pad"
+                  onFocus={(e) => {
+                    const target = e.target as any;
+                    target?.measure?.((x: number, y: number, w: number, h: number, px: number, py: number) => {
+                      scrollToInput(py);
+                    });
+                  }}
                 />
               </>
             )}
@@ -333,8 +379,14 @@ export const AddRuleScreen = ({ navigation }: any) => {
                   placeholderTextColor={colors.textMuted}
                   value={prefix}
                   onChangeText={(t) => setPrefix(t.replace(/\D/g, '').slice(0, 4))}
-                  keyboardType="numeric"
+                  keyboardType="number-pad"
                   maxLength={4}
+                  onFocus={(e) => {
+                    const target = e.target as any;
+                    target?.measure?.((x: number, y: number, w: number, h: number, px: number, py: number) => {
+                      scrollToInput(py);
+                    });
+                  }}
                 />
                 <Text style={styles.hint}>* Serão bloqueadas chamadas cujo número começa com esses 4 dígitos</Text>
               </>
@@ -349,8 +401,14 @@ export const AddRuleScreen = ({ navigation }: any) => {
                   placeholderTextColor={colors.textMuted}
                   value={suffix}
                   onChangeText={(t) => setSuffix(t.replace(/\D/g, '').slice(0, 4))}
-                  keyboardType="numeric"
+                  keyboardType="number-pad"
                   maxLength={4}
+                  onFocus={(e) => {
+                    const target = e.target as any;
+                    target?.measure?.((x: number, y: number, w: number, h: number, px: number, py: number) => {
+                      scrollToInput(py);
+                    });
+                  }}
                 />
                 <Text style={styles.hint}>* Serão bloqueadas chamadas cujo número termina com esses 4 dígitos</Text>
               </>
@@ -370,13 +428,12 @@ export const AddRuleScreen = ({ navigation }: any) => {
         </Text>
       </TouchableOpacity>
     </ScrollView>
-    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 20, paddingBottom: 100 },
+  content: { padding: 20 },
   subtitle: { fontSize: 13, color: colors.textMuted, marginBottom: 16 },
   typeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
   typeCard: {
@@ -431,7 +488,7 @@ const styles = StyleSheet.create({
   dddActions: { flexDirection: 'row', gap: 12 },
   dddActionBtn: { paddingVertical: 6 },
   dddActionText: { color: colors.neonBlue, fontSize: 12, fontWeight: '600' },
-  hint: { fontSize: 11, color: colors.textMuted, marginTop: 4, fontStyle: 'italic' },
+  hint: { fontSize: 11, color: colors.textMuted, marginTop: 2, marginBottom: 6, fontStyle: 'italic' },
   saveBtn: {
     borderRadius: 14,
     borderWidth: 1.5,

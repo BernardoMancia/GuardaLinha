@@ -6,9 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
-  StatusBar,
-  Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { colors } from '../theme/colors';
 import { RuleItem } from '../components/RuleItem';
@@ -16,6 +15,7 @@ import { RulesStorage } from '../storage/RulesStorage';
 import { Rule } from '../types/rules';
 
 export const RulesScreen = ({ navigation }: any) => {
+  const insets = useSafeAreaInsets();
   const [rules, setRules] = useState<Rule[]>([]);
 
   useFocusEffect(
@@ -53,7 +53,7 @@ export const RulesScreen = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <View>
           <Text style={styles.title}>Regras</Text>
@@ -81,13 +81,13 @@ export const RulesScreen = ({ navigation }: any) => {
           renderItem={({ item }) => (
             <RuleItem rule={item} onToggle={handleToggle} onDelete={handleDelete} />
           )}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 140 }]}
           showsVerticalScrollIndicator={false}
         />
       )}
 
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { bottom: insets.bottom + 80 }]}
         onPress={() => navigation.navigate('AddRule')}
         activeOpacity={0.8}
       >
@@ -99,11 +99,7 @@ export const RulesScreen = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 36) + 4 : 0,
-  },
+  container: { flex: 1, backgroundColor: colors.bg },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -123,14 +119,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.neonRedDim,
   },
   clearBtnText: { color: colors.neonRed, fontSize: 13, fontWeight: '600' },
-  list: { paddingHorizontal: 20, paddingBottom: 140 },
+  list: { paddingHorizontal: 20 },
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
   emptyEmoji: { fontSize: 64, marginBottom: 20 },
   emptyTitle: { fontSize: 18, fontWeight: '700', color: colors.textPrimary, marginBottom: 8 },
   emptyDesc: { fontSize: 13, color: colors.textMuted, textAlign: 'center', lineHeight: 20 },
   fab: {
     position: 'absolute',
-    bottom: 90,
     right: 20,
     flexDirection: 'row',
     alignItems: 'center',

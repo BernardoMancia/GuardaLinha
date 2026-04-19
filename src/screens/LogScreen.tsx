@@ -6,9 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
-  StatusBar,
-  Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { colors } from '../theme/colors';
 import { GlassCard } from '../components/GlassCard';
@@ -21,6 +20,7 @@ const formatDate = (ts: number): string => {
 };
 
 export const LogScreen = ({ navigation }: any) => {
+  const insets = useSafeAreaInsets();
   const [logs, setLogs] = useState<BlockedCallLog[]>([]);
 
   useFocusEffect(
@@ -99,7 +99,7 @@ export const LogScreen = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <View>
           <Text style={styles.title}>Histórico</Text>
@@ -125,7 +125,7 @@ export const LogScreen = ({ navigation }: any) => {
           data={logs}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 100 }]}
           showsVerticalScrollIndicator={false}
         />
       )}
@@ -134,11 +134,7 @@ export const LogScreen = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 36) + 4 : 0,
-  },
+  container: { flex: 1, backgroundColor: colors.bg },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -158,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.neonRedDim,
   },
   clearText: { color: colors.neonRed, fontSize: 13, fontWeight: '600' },
-  list: { paddingHorizontal: 16, paddingBottom: 100 },
+  list: { paddingHorizontal: 16 },
   logCard: { marginBottom: 10 },
   logRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   logLeft: { flex: 1 },

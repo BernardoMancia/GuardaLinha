@@ -6,9 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  StatusBar,
-  Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { colors } from '../theme/colors';
 import { AnimatedShield } from '../components/AnimatedShield';
@@ -20,6 +19,7 @@ import { CallBlocker } from '../native/CallBlocker';
 import { Rule, RULE_LABELS, RULE_ICONS, ruleTypeColors } from '../types/rules';
 
 export const HomeScreen = ({ navigation }: any) => {
+  const insets = useSafeAreaInsets();
   const [masterEnabled, setMasterEnabled] = useState(true);
   const [rules, setRules] = useState<Rule[]>([]);
   const [hasRole, setHasRole] = useState(false);
@@ -57,8 +57,8 @@ export const HomeScreen = ({ navigation }: any) => {
 
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
+      style={[styles.container, { paddingTop: insets.top }]}
+      contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 100 }]}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.neonGreen} />}
     >
       <View style={styles.header}>
@@ -150,12 +150,8 @@ export const HomeScreen = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 36) : 0,
-  },
-  content: { padding: 20, paddingBottom: 100 },
+  container: { flex: 1, backgroundColor: colors.bg },
+  content: { padding: 20 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

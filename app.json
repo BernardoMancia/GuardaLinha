@@ -20,6 +20,7 @@
       "package": "com.guardalinha.app",
       "minSdkVersion": 29,
       "edgeToEdgeEnabled": true,
+      "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "android.permission.READ_PHONE_STATE",
         "android.permission.READ_CALL_LOG",

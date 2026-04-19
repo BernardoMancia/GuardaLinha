@@ -2,7 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text, Platform } from 'react-native';
+import { Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
 import { HomeScreen } from '../screens/HomeScreen';
 import { RulesScreen } from '../screens/RulesScreen';
@@ -19,42 +20,45 @@ const TAB_ICONS: Record<string, string> = {
   Log: '📋',
 };
 
-const screenOptions = (route: any, focused: boolean) => {
-  const color = focused ? colors.neonGreen : colors.textMuted;
-  return {
-    tabBarLabel: ({ focused }: any) => (
-      <Text style={{ color: focused ? colors.neonGreen : colors.textMuted, fontSize: 10, marginTop: -4 }}>
-        {route.name === 'Home' ? 'Início' : route.name === 'Rules' ? 'Regras' : 'Histórico'}
-      </Text>
-    ),
-    tabBarIcon: () => (
-      <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.5 }}>{TAB_ICONS[route.name]}</Text>
-    ),
-  };
+const TAB_LABELS: Record<string, string> = {
+  Home: 'Início',
+  Rules: 'Regras',
+  Log: 'Histórico',
 };
 
-const TabNavigator = () => (
-  <Tab.Navigator
-    screenOptions={({ route }) => ({
-      headerShown: false,
-      tabBarStyle: {
-        backgroundColor: '#0e1118',
-        borderTopColor: colors.border,
-        borderTopWidth: 1,
-        height: Platform.OS === 'ios' ? 88 : 70,
-        paddingBottom: Platform.OS === 'ios' ? 24 : 12,
-        paddingTop: 10,
-      },
-      tabBarActiveTintColor: colors.neonGreen,
-      tabBarInactiveTintColor: colors.textMuted,
-      ...screenOptions(route, false),
-    })}
-  >
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Rules" component={RulesScreen} />
-    <Tab.Screen name="Log" component={LogScreen} />
-  </Tab.Navigator>
-);
+const TabNavigator = () => {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: '#0e1118',
+          borderTopColor: colors.border,
+          borderTopWidth: 1,
+          height: 56 + insets.bottom,
+          paddingBottom: insets.bottom,
+          paddingTop: 6,
+        },
+        tabBarActiveTintColor: colors.neonGreen,
+        tabBarInactiveTintColor: colors.textMuted,
+        tabBarLabel: ({ focused }: any) => (
+          <Text style={{ color: focused ? colors.neonGreen : colors.textMuted, fontSize: 10, marginTop: -2, marginBottom: 4 }}>
+            {TAB_LABELS[route.name] || route.name}
+          </Text>
+        ),
+        tabBarIcon: ({ focused }: any) => (
+          <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>{TAB_ICONS[route.name]}</Text>
+        ),
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Rules" component={RulesScreen} />
+      <Tab.Screen name="Log" component={LogScreen} />
+    </Tab.Navigator>
+  );
+};
 
 export const AppNavigator = () => (
   <NavigationContainer>
