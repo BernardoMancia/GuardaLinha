@@ -219,7 +219,7 @@ class CallBlockerModule(reactContext: ReactApplicationContext) :
                 val roleManager = reactApplicationContext.getSystemService(RoleManager::class.java)
                 val intent = roleManager?.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING)
                 if (intent != null) {
-                    currentActivity?.startActivityForResult(intent, 1001)
+                    reactApplicationContext.currentActivity?.startActivityForResult(intent, 1001)
                     promise.resolve(null)
                 } else {
                     promise.reject("NO_INTENT", "Could not create role request intent")
@@ -315,6 +315,19 @@ const withCallScreeningFiles = (config) => {
             `override fun getPackages(): List<ReactPackage> =\n            PackageList(this).packages.apply {\n              add(CallBlockerPackage())`
           );
           fs.writeFileSync(mainAppPath, mainApp, 'utf-8');
+        }
+      }
+
+      const buildGradlePath = path.join(projectRoot, 'android', 'build.gradle');
+      if (fs.existsSync(buildGradlePath)) {
+        let buildGradle = fs.readFileSync(buildGradlePath, 'utf-8');
+        const localRepoLine = `maven { url "$rootDir/../node_modules/@react-native-async-storage/async-storage/android/local_repo" }`;
+        if (!buildGradle.includes('local_repo')) {
+          buildGradle = buildGradle.replace(
+            /maven \{ url 'https:\/\/www\.jitpack\.io' \}/,
+            `maven { url 'https://www.jitpack.io' }\n    ${localRepoLine}`
+          );
+          fs.writeFileSync(buildGradlePath, buildGradle, 'utf-8');
         }
       }
 

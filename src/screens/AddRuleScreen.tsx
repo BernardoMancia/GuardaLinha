@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { colors, ruleTypeColors } from '../theme/colors';
 import { GlassCard } from '../components/GlassCard';
@@ -171,8 +173,12 @@ export const AddRuleScreen = ({ navigation }: any) => {
   const accent = selectedType ? ruleTypeColors[selectedType] || colors.neonGreen : colors.neonGreen;
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: colors.bg }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    >
     <ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-      <Text style={styles.title}>Nova Regra</Text>
       <Text style={styles.subtitle}>Escolha o tipo de bloqueio</Text>
 
       <View style={styles.typeGrid}>
@@ -364,14 +370,14 @@ export const AddRuleScreen = ({ navigation }: any) => {
         </Text>
       </TouchableOpacity>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 20, paddingBottom: 60 },
-  title: { fontSize: 24, fontWeight: '800', color: colors.textPrimary, marginBottom: 4 },
-  subtitle: { fontSize: 13, color: colors.textMuted, marginBottom: 20 },
+  content: { padding: 20, paddingBottom: 100 },
+  subtitle: { fontSize: 13, color: colors.textMuted, marginBottom: 16 },
   typeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
   typeCard: {
     width: '47%',
