@@ -19,7 +19,7 @@ const formatDate = (ts: number): string => {
   return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 };
 
-export const LogScreen = ({ navigation }: any) => {
+export const LogScreen = () => {
   const insets = useSafeAreaInsets();
   const [logs, setLogs] = useState<BlockedCallLog[]>([]);
 

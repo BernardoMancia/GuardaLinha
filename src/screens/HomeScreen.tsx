@@ -16,7 +16,8 @@ import { NeonToggle } from '../components/NeonToggle';
 import { StatusBadge } from '../components/StatusBadge';
 import { RulesStorage } from '../storage/RulesStorage';
 import { CallBlocker } from '../native/CallBlocker';
-import { Rule, RULE_LABELS, RULE_ICONS, ruleTypeColors } from '../types/rules';
+import { Rule, RULE_LABELS, RULE_ICONS } from '../types/rules';
+import { ruleTypeColors } from '../theme/colors';
 
 export const HomeScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();

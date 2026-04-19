@@ -5,8 +5,6 @@ const { CallBlockerModule } = NativeModules;
 
 const isAndroid = Platform.OS === 'android';
 
-const noop = async () => {};
-
 export const CallBlocker = {
   syncRules: async (rules: Rule[]): Promise<void> => {
     if (!isAndroid || !CallBlockerModule) return;
